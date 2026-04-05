@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"embed"
 	"log"
 	"net/http"
 	"os"
@@ -14,9 +13,6 @@ import (
 
 	_ "github.com/lib/pq"
 )
-
-//go:embed migrations/*.sql
-var migrationsFS embed.FS
 
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
@@ -34,7 +30,7 @@ func main() {
 		log.Fatalf("failed to ping database: %v", err)
 	}
 
-	if err := migrate.Run(db, migrationsFS); err != nil {
+	if err := migrate.Run(db); err != nil {
 		log.Fatalf("failed to run migrations: %v", err)
 	}
 

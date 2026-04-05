@@ -10,16 +10,19 @@ import (
 	"sort"
 )
 
+//go:embed migrations/*.sql
+var migrationFS embed.FS
+
 // Run executes all embedded SQL migration files in alphabetical order.
-func Run(db *sql.DB, mFS embed.FS) error {
-	paths, err := fs.Glob(mFS, "migrations/*.sql")
+func Run(db *sql.DB) error {
+	paths, err := fs.Glob(migrationFS, "migrations/*.sql")
 	if err != nil {
 		return fmt.Errorf("failed to glob migrations: %w", err)
 	}
 	sort.Strings(paths)
 
 	for _, path := range paths {
-		content, err := mFS.ReadFile(path)
+		content, err := migrationFS.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("failed to read %s: %w", path, err)
 		}
