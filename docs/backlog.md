@@ -24,4 +24,4 @@ Task list and improvements for the codecommerceapi project.
 - [x] Change `float64` to `int64` (cents) for price
 - [x] Implement cascade delete for products when deleting a category (via `ON DELETE CASCADE` FK constraint)
 - [x] Add pagination to `FindAllProducts()`, `FindAllCategories()`, and `FindProductsByCategoryID()` (query params: `page`, `per_page`)
-- [ ] Optimize `Delete*` in service: use `DELETE WHERE` + check rows affected instead of pre-fetch
+- [x] Optimize `Delete*` in service: use `DELETE WHERE` + check rows affected instead of pre-fetch

@@ -131,6 +131,16 @@ func (p *ProductDB) UpdateProduct(product *entities.Product) error {
 }
 
 func (p *ProductDB) DeleteProduct(id uuid.UUID) error {
-	_, err := p.db.Exec("DELETE FROM tb_product WHERE pk_product = $1", id)
-	return err
+	result, err := p.db.Exec("DELETE FROM tb_product WHERE pk_product = $1", id)
+	if err != nil {
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return service.ErrProductNotFound
+	}
+	return nil
 }

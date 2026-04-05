@@ -9,8 +9,6 @@ import (
 	"github.com/google/uuid"
 )
 
-var ErrProductNotFound = errors.New("product not found")
-
 type ProductService struct {
 	repo ProductRepository
 }
@@ -87,9 +85,5 @@ func (s *ProductService) UpdateProduct(id uuid.UUID, name, description string, p
 }
 
 func (s *ProductService) DeleteProduct(id uuid.UUID) error {
-	_, err := s.repo.FindProductByID(id)
-	if err != nil {
-		return ErrProductNotFound
-	}
 	return s.repo.DeleteProduct(id)
 }

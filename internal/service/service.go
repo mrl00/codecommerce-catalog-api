@@ -1,9 +1,16 @@
 package service
 
 import (
+	"errors"
+
 	"codecommerceapi/internal/entities"
 
 	"github.com/google/uuid"
+)
+
+var (
+	ErrCategoryNotFound = errors.New("category not found")
+	ErrProductNotFound  = errors.New("product not found")
 )
 
 type PaginationParams struct {

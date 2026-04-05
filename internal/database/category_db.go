@@ -89,6 +89,16 @@ func (c *CategoryDB) UpdateCategory(category *entities.Category) error {
 }
 
 func (c *CategoryDB) DeleteCategory(id uuid.UUID) error {
-	_, err := c.db.Exec("DELETE FROM tb_category WHERE pk_category = $1", id)
-	return err
+	result, err := c.db.Exec("DELETE FROM tb_category WHERE pk_category = $1", id)
+	if err != nil {
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return service.ErrCategoryNotFound
+	}
+	return nil
 }

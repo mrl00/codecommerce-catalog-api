@@ -9,8 +9,6 @@ import (
 	"github.com/google/uuid"
 )
 
-var ErrCategoryNotFound = errors.New("category not found")
-
 type CategoryService struct {
 	repo CategoryRepository
 }
@@ -63,9 +61,5 @@ func (s *CategoryService) UpdateCategory(id uuid.UUID, name string) (*entities.C
 }
 
 func (s *CategoryService) DeleteCategory(id uuid.UUID) error {
-	_, err := s.repo.FindCategoryByID(id)
-	if err != nil {
-		return ErrCategoryNotFound
-	}
 	return s.repo.DeleteCategory(id)
 }
