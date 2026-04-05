@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"codecommerceapi/internal/database"
+	"codecommerceapi/internal/migrate"
 	"codecommerceapi/internal/router"
 	"codecommerceapi/internal/service"
 
@@ -27,6 +28,10 @@ func main() {
 
 	if err := db.Ping(); err != nil {
 		log.Fatalf("failed to ping database: %v", err)
+	}
+
+	if err := migrate.Run(db); err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
 	}
 
 	catDB := database.NewCategoryDB(db)

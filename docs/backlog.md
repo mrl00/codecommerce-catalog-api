@@ -25,3 +25,4 @@ Task list and improvements for the codecommerceapi project.
 - [x] Implement cascade delete for products when deleting a category (via `ON DELETE CASCADE` FK constraint)
 - [x] Add pagination to `FindAllProducts()`, `FindAllCategories()`, and `FindProductsByCategoryID()` (query params: `page`, `per_page`)
 - [x] Optimize `Delete*` in service: use `DELETE WHERE` + check rows affected instead of pre-fetch
+- [x] Add embedded migration runner to execute SQL files on server startup
