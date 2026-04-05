@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"goapi/internal/service"
+	"codecommerceapi/internal/service"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -18,18 +18,29 @@ func NewCategoryHandler(svc *service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{svc: svc}
 }
 
+func errorResponse(w http.ResponseWriter, msg string, code int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(map[string]string{"error": msg})
+}
+
 func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Name string `json:"name"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorResponse(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if input.Name == "" {
+		errorResponse(w, "name is required", http.StatusBadRequest)
 		return
 	}
 
 	category, err := h.svc.CreateCategory(input.Name)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -41,17 +52,17 @@ func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request)
 func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid category id", http.StatusBadRequest)
+		errorResponse(w, "invalid category id", http.StatusBadRequest)
 		return
 	}
 
 	category, err := h.svc.GetCategory(id)
 	if err != nil {
 		if err == service.ErrCategoryNotFound {
-			http.Error(w, "category not found", http.StatusNotFound)
+			errorResponse(w, "category not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -62,7 +73,7 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request) {
 func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request) {
 	categories, err := h.svc.ListCategories()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -73,7 +84,7 @@ func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request)
 func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid category id", http.StatusBadRequest)
+		errorResponse(w, "invalid category id", http.StatusBadRequest)
 		return
 	}
 
@@ -81,17 +92,22 @@ func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request)
 		Name string `json:"name"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorResponse(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if input.Name == "" {
+		errorResponse(w, "name is required", http.StatusBadRequest)
 		return
 	}
 
 	category, err := h.svc.UpdateCategory(id, input.Name)
 	if err != nil {
 		if err == service.ErrCategoryNotFound {
-			http.Error(w, "category not found", http.StatusNotFound)
+			errorResponse(w, "category not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -102,16 +118,16 @@ func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request)
 func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid category id", http.StatusBadRequest)
+		errorResponse(w, "invalid category id", http.StatusBadRequest)
 		return
 	}
 
 	if err := h.svc.DeleteCategory(id); err != nil {
 		if err == service.ErrCategoryNotFound {
-			http.Error(w, "category not found", http.StatusNotFound)
+			errorResponse(w, "category not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 

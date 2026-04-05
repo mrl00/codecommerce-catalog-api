@@ -1,8 +1,8 @@
 package router
 
 import (
-	"goapi/internal/handler"
-	"goapi/internal/service"
+	"codecommerceapi/internal/handler"
+	"codecommerceapi/internal/service"
 
 	"github.com/gorilla/mux"
 )

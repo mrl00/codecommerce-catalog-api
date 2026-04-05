@@ -1,4 +1,4 @@
-module goapi
+module codecommerceapi
 
 go 1.25.4
 
