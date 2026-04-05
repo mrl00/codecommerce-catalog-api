@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"goapi/internal/service"
@@ -20,20 +21,41 @@ func NewProductHandler(svc *service.ProductService) *ProductHandler {
 
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Name        string    `json:"name"`
-		Description string    `json:"description"`
-		Price       float64   `json:"price"`
-		ImageURL    string    `json:"image_url"`
-		CategoryID  uuid.UUID `json:"category"`
+		Name        string  `json:"name"`
+		Description string  `json:"description"`
+		Price       float64 `json:"price"`
+		ImageURL    string  `json:"image_url"`
+		CategoryID  string  `json:"category"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorResponse(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	product, err := h.svc.CreateProduct(input.Name, input.Description, input.Price, input.ImageURL, input.CategoryID)
+	if input.Name == "" {
+		errorResponse(w, "name is required", http.StatusBadRequest)
+		return
+	}
+
+	if input.Price <= 0 {
+		errorResponse(w, "price must be greater than zero", http.StatusBadRequest)
+		return
+	}
+
+	if input.CategoryID == "" {
+		errorResponse(w, "category is required", http.StatusBadRequest)
+		return
+	}
+
+	categoryID, err := uuid.Parse(input.CategoryID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorResponse(w, "invalid category id format", http.StatusBadRequest)
+		return
+	}
+
+	product, err := h.svc.CreateProduct(input.Name, input.Description, input.Price, input.ImageURL, categoryID)
+	if err != nil {
+		errorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -45,17 +67,17 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid product id", http.StatusBadRequest)
+		errorResponse(w, "invalid product id", http.StatusBadRequest)
 		return
 	}
 
 	product, err := h.svc.GetProduct(id)
 	if err != nil {
 		if err == service.ErrProductNotFound {
-			http.Error(w, "product not found", http.StatusNotFound)
+			errorResponse(w, "product not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -66,7 +88,7 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := h.svc.ListProducts()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -77,13 +99,13 @@ func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 func (h *ProductHandler) ListProductsByCategory(w http.ResponseWriter, r *http.Request) {
 	categoryID, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid category id", http.StatusBadRequest)
+		errorResponse(w, "invalid category id", http.StatusBadRequest)
 		return
 	}
 
 	products, err := h.svc.ListProductsByCategory(categoryID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -94,29 +116,50 @@ func (h *ProductHandler) ListProductsByCategory(w http.ResponseWriter, r *http.R
 func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid product id", http.StatusBadRequest)
+		errorResponse(w, "invalid product id", http.StatusBadRequest)
 		return
 	}
 
 	var input struct {
-		Name        string    `json:"name"`
-		Description string    `json:"description"`
-		Price       float64   `json:"price"`
-		ImageURL    string    `json:"image_url"`
-		CategoryID  uuid.UUID `json:"category"`
+		Name        string  `json:"name"`
+		Description string  `json:"description"`
+		Price       float64 `json:"price"`
+		ImageURL    string  `json:"image_url"`
+		CategoryID  string  `json:"category"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errorResponse(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	product, err := h.svc.UpdateProduct(id, input.Name, input.Description, input.Price, input.ImageURL, input.CategoryID)
+	if input.Name == "" {
+		errorResponse(w, "name is required", http.StatusBadRequest)
+		return
+	}
+
+	if input.Price <= 0 {
+		errorResponse(w, "price must be greater than zero", http.StatusBadRequest)
+		return
+	}
+
+	if input.CategoryID == "" {
+		errorResponse(w, "category is required", http.StatusBadRequest)
+		return
+	}
+
+	categoryID, err := uuid.Parse(input.CategoryID)
+	if err != nil {
+		errorResponse(w, "invalid category id format", http.StatusBadRequest)
+		return
+	}
+
+	product, err := h.svc.UpdateProduct(id, input.Name, input.Description, input.Price, input.ImageURL, categoryID)
 	if err != nil {
 		if err == service.ErrProductNotFound {
-			http.Error(w, "product not found", http.StatusNotFound)
+			errorResponse(w, "product not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("failed to update product: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 
@@ -127,16 +170,16 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "invalid product id", http.StatusBadRequest)
+		errorResponse(w, "invalid product id", http.StatusBadRequest)
 		return
 	}
 
 	if err := h.svc.DeleteProduct(id); err != nil {
 		if err == service.ErrProductNotFound {
-			http.Error(w, "product not found", http.StatusNotFound)
+			errorResponse(w, "product not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 

@@ -12,11 +12,11 @@ Task list and improvements for the goapi project.
 - [x] Add route for products by category (`GET /api/categories/{id}/products`)
 - [x] Connect database to server via `lib/pq`
 - [x] Split `entity.go` into separate files (`category.go`, `product.go`)
+- [x] Create SQL database initialization schema (`migrations/001_initial_schema.sql`)
+- [x] Add input validation in handlers (name, price, category required; errors as JSON)
 
 ## Todo
 
-- [ ] Create SQL database initialization schema
-- [ ] Add input validation in handlers
 - [ ] Add `_test.go` files (CI runs `go test ./...` but there are no tests)
 - [ ] Replace `db.Prepare()` with direct `db.Exec()`/`db.Query()` (statements are single-use)
 - [ ] Change `float64` to decimal type or integer (cents) for price
