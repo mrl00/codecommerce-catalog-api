@@ -39,5 +39,5 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/goapi?sslmode=disable"
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: go test -v ./...
