@@ -3,10 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
-	"goapi/internal/database"
-	"goapi/internal/entities"
+	"goapi/internal/service"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -17,14 +15,12 @@ func Health(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
 
-// Category handlers
-
 type CategoryHandler struct {
-	db *database.CategoryDB
+	svc *service.CategoryService
 }
 
-func NewCategoryHandler(db *database.CategoryDB) *CategoryHandler {
-	return &CategoryHandler{db: db}
+func NewCategoryHandler(svc *service.CategoryService) *CategoryHandler {
+	return &CategoryHandler{svc: svc}
 }
 
 func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request) {
@@ -36,9 +32,9 @@ func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	category := entities.NewCategory(input.Name)
-	if err := h.db.SaveCategory(category); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	category, err := h.svc.CreateCategory(input.Name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -54,9 +50,13 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category, err := h.db.FindCategoryByID(id)
+	category, err := h.svc.GetCategory(id)
 	if err != nil {
-		http.Error(w, "category not found", http.StatusNotFound)
+		if err == service.ErrCategoryNotFound {
+			http.Error(w, "category not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -65,7 +65,7 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := h.db.FindAllCategories()
+	categories, err := h.svc.ListCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -82,12 +82,6 @@ func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	category, err := h.db.FindCategoryByID(id)
-	if err != nil {
-		http.Error(w, "category not found", http.StatusNotFound)
-		return
-	}
-
 	var input struct {
 		Name string `json:"name"`
 	}
@@ -96,10 +90,12 @@ func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	category.Name = input.Name
-	category.UpdatedAt = time.Now()
-
-	if err := h.db.UpdateCategory(category); err != nil {
+	category, err := h.svc.UpdateCategory(id, input.Name)
+	if err != nil {
+		if err == service.ErrCategoryNotFound {
+			http.Error(w, "category not found", http.StatusNotFound)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -115,7 +111,11 @@ func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := h.db.DeleteCategory(id); err != nil {
+	if err := h.svc.DeleteCategory(id); err != nil {
+		if err == service.ErrCategoryNotFound {
+			http.Error(w, "category not found", http.StatusNotFound)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -123,14 +123,12 @@ func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Product handlers
-
 type ProductHandler struct {
-	db *database.ProductDB
+	svc *service.ProductService
 }
 
-func NewProductHandler(db *database.ProductDB) *ProductHandler {
-	return &ProductHandler{db: db}
+func NewProductHandler(svc *service.ProductService) *ProductHandler {
+	return &ProductHandler{svc: svc}
 }
 
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -146,9 +144,9 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product := entities.NewProduct(input.Name, input.Description, input.Price, input.ImageURL, input.CategoryID)
-	if err := h.db.SaveProduct(product); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	product, err := h.svc.CreateProduct(input.Name, input.Description, input.Price, input.ImageURL, input.CategoryID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -164,9 +162,13 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := h.db.FindProductByID(id)
+	product, err := h.svc.GetProduct(id)
 	if err != nil {
-		http.Error(w, "product not found", http.StatusNotFound)
+		if err == service.ErrProductNotFound {
+			http.Error(w, "product not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -175,7 +177,7 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := h.db.FindAllProducts()
+	products, err := h.svc.ListProducts()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -192,7 +194,7 @@ func (h *ProductHandler) ListProductsByCategory(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	products, err := h.db.FindProductsByCategoryID(categoryID)
+	products, err := h.svc.ListProductsByCategory(categoryID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -209,12 +211,6 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := h.db.FindProductByID(id)
-	if err != nil {
-		http.Error(w, "product not found", http.StatusNotFound)
-		return
-	}
-
 	var input struct {
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
@@ -227,14 +223,12 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product.Name = input.Name
-	product.Description = input.Description
-	product.Price = input.Price
-	product.ImageURL = input.ImageURL
-	product.CategoryID = input.CategoryID
-	product.UpdatedAt = time.Now()
-
-	if err := h.db.UpdateProduct(product); err != nil {
+	product, err := h.svc.UpdateProduct(id, input.Name, input.Description, input.Price, input.ImageURL, input.CategoryID)
+	if err != nil {
+		if err == service.ErrProductNotFound {
+			http.Error(w, "product not found", http.StatusNotFound)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -250,7 +244,11 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.db.DeleteProduct(id); err != nil {
+	if err := h.svc.DeleteProduct(id); err != nil {
+		if err == service.ErrProductNotFound {
+			http.Error(w, "product not found", http.StatusNotFound)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

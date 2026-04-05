@@ -30,3 +30,7 @@ func NewProduct(name string, description string, price float64, imageURL string,
 		UpdatedAt:   now,
 	}
 }
+
+func (p *Product) ResetUpdatedAt() {
+	p.UpdatedAt = time.Now()
+}
