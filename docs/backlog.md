@@ -14,6 +14,7 @@ Task list and improvements for the codecommerceapi project.
 - [x] Split `entity.go` into separate files (`category.go`, `product.go`)
 - [x] Create SQL database initialization schema (`migrations/001_initial_schema.sql`)
 - [x] Add input validation in handlers (name, price, category required; errors as JSON)
+- [x] Standardize module name (`goapi` → `codecommerceapi`)
 
 ## Todo
 
@@ -24,4 +25,3 @@ Task list and improvements for the codecommerceapi project.
 - [ ] Add pagination to `FindAllProducts()` and `FindAllCategories()`
 - [ ] Optimize `Delete*` in service: use `DELETE WHERE` + check rows affected instead of pre-fetch
 - [ ] Fix CI `secrets.DATABASE_URL` — conflicts with the postgres service defined in the workflow
-- [x] Standardize module name (`goapi` → `codecommerceapi`)
