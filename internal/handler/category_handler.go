@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"codecommerceapi/internal/service"
@@ -16,6 +17,24 @@ type CategoryHandler struct {
 
 func NewCategoryHandler(svc *service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{svc: svc}
+}
+
+func parseCategoryPaginationParams(r *http.Request) service.PaginationParams {
+	q := r.URL.Query()
+	page, perPage := 1, 10
+	if v := q.Get("page"); v != "" {
+		fmt.Sscanf(v, "%d", &page)
+	}
+	if v := q.Get("per_page"); v != "" {
+		fmt.Sscanf(v, "%d", &perPage)
+	}
+	if page < 1 {
+		page = 1
+	}
+	if perPage < 1 || perPage > 100 {
+		perPage = 10
+	}
+	return service.PaginationParams{Page: page, PerPage: perPage}
 }
 
 func errorResponse(w http.ResponseWriter, msg string, code int) {
@@ -71,14 +90,15 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := h.svc.ListCategories()
+	params := parseCategoryPaginationParams(r)
+	result, err := h.svc.ListCategories(params)
 	if err != nil {
 		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(categories)
+	json.NewEncoder(w).Encode(result)
 }
 
 func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {

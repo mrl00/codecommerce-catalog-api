@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"codecommerceapi/internal/entities"
+	"codecommerceapi/internal/service"
 
 	"github.com/google/uuid"
 )
@@ -37,10 +38,20 @@ func (c *CategoryDB) FindCategoryByID(id uuid.UUID) (*entities.Category, error) 
 	return category, nil
 }
 
-func (c *CategoryDB) FindAllCategories() ([]*entities.Category, error) {
+func (c *CategoryDB) FindAllCategories(params service.PaginationParams) (*service.PaginatedResult[*entities.Category], error) {
+	var total int
+	if err := c.db.QueryRow("SELECT COUNT(*) FROM tb_category").Scan(&total); err != nil {
+		return nil, err
+	}
+
+	totalPages := (total + params.PerPage - 1) / params.PerPage
+	offset := (params.Page - 1) * params.PerPage
+
 	rows, err := c.db.Query(`
 		SELECT pk_category, tx_name, ts_category_created_at, ts_category_updated_at
-		FROM tb_category`)
+		FROM tb_category
+		ORDER BY pk_category
+		LIMIT $1 OFFSET $2`, params.PerPage, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +66,17 @@ func (c *CategoryDB) FindAllCategories() ([]*entities.Category, error) {
 		}
 		categories = append(categories, category)
 	}
-	return categories, nil
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &service.PaginatedResult[*entities.Category]{
+		Items:      categories,
+		Total:      total,
+		Page:       params.Page,
+		PerPage:    params.PerPage,
+		TotalPages: totalPages,
+	}, nil
 }
 
 func (c *CategoryDB) UpdateCategory(category *entities.Category) error {
