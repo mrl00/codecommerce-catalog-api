@@ -25,11 +25,18 @@ This project follows Go's standard project layout:
 - **Price stored as**: `BIGINT` (cents) to avoid float precision issues
 - **Migration files**: `migrations/` directory, numbered prefix (e.g., `001_initial_schema.sql`)
 
+## Testing
+
+- **Unit tests**: `go test ./...` — service layer mocks, entity constructors
+- **Integration tests**: hurl tests in `tests/` cover the full HTTP lifecycle
+- **Run integration tests**: `./tests/run_tests.sh` (requires running server + PostgreSQL)
+
 ## Commands
 
 ```bash
 go run ./cmd/server/          # run development server on :8080
 go build -o server ./cmd/server/  # build binary
+go test ./...                 # run unit tests
 go mod tidy                   # sync dependencies
 ```
 
