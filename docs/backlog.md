@@ -20,7 +20,7 @@ Task list and improvements for the codecommerceapi project.
 ## Todo
 
 - [ ] Add `_test.go` files (CI runs `go test ./...` but there are no tests)
-- [ ] Replace `db.Prepare()` with direct `db.Exec()`/`db.Query()` (statements are single-use)
+- [x] Replace `db.Prepare()` with direct `db.Exec()`/`db.Query()` (statements are single-use)
 - [ ] Change `float64` to decimal type or integer (cents) for price
 - [ ] Implement cascade delete for products when deleting a category
 - [ ] Add pagination to `FindAllProducts()` and `FindAllCategories()`
