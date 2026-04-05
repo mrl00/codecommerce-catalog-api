@@ -16,15 +16,10 @@ func NewProductDB(db *sql.DB) *ProductDB {
 }
 
 func (p *ProductDB) SaveProduct(product *entities.Product) error {
-	stmt, err := p.db.Prepare(`
+	_, err := p.db.Exec(`
 		INSERT INTO tb_product (pk_product, tx_name, tx_description, nr_price, tx_image_url, fk_category, ts_product_created_at, ts_product_updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(product.ID, product.Name, product.Description, product.Price, product.ImageURL, product.CategoryID, product.CreatedAt, product.UpdatedAt)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+		product.ID, product.Name, product.Description, product.Price, product.ImageURL, product.CategoryID, product.CreatedAt, product.UpdatedAt)
 	return err
 }
 
@@ -86,16 +81,11 @@ func (p *ProductDB) FindProductsByCategoryID(categoryID uuid.UUID) ([]*entities.
 }
 
 func (p *ProductDB) UpdateProduct(product *entities.Product) error {
-	stmt, err := p.db.Prepare(`
+	_, err := p.db.Exec(`
 		UPDATE tb_product
 		SET tx_name = $2, tx_description = $3, nr_price = $4, tx_image_url = $5, fk_category = $6, ts_product_updated_at = $7
-		WHERE pk_product = $1`)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(product.ID, product.Name, product.Description, product.Price, product.ImageURL, product.CategoryID, product.UpdatedAt)
+		WHERE pk_product = $1`,
+		product.ID, product.Name, product.Description, product.Price, product.ImageURL, product.CategoryID, product.UpdatedAt)
 	return err
 }
 

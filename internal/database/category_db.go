@@ -16,15 +16,10 @@ func NewCategoryDB(db *sql.DB) *CategoryDB {
 }
 
 func (c *CategoryDB) SaveCategory(category *entities.Category) error {
-	stmt, err := c.db.Prepare(`
+	_, err := c.db.Exec(`
 		INSERT INTO tb_category (pk_category, tx_name, ts_category_created_at, ts_category_updated_at)
-		VALUES ($1, $2, $3, $4)`)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(category.ID, category.Name, category.CreatedAt, category.UpdatedAt)
+		VALUES ($1, $2, $3, $4)`,
+		category.ID, category.Name, category.CreatedAt, category.UpdatedAt)
 	return err
 }
 
@@ -64,26 +59,15 @@ func (c *CategoryDB) FindAllCategories() ([]*entities.Category, error) {
 }
 
 func (c *CategoryDB) UpdateCategory(category *entities.Category) error {
-	stmt, err := c.db.Prepare(`
+	_, err := c.db.Exec(`
 		UPDATE tb_category
 		SET tx_name = $2, ts_category_updated_at = $3
-		WHERE pk_category = $1`)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(category.ID, category.Name, category.UpdatedAt)
+		WHERE pk_category = $1`,
+		category.ID, category.Name, category.UpdatedAt)
 	return err
 }
 
 func (c *CategoryDB) DeleteCategory(id uuid.UUID) error {
-	stmt, err := c.db.Prepare("DELETE FROM tb_category WHERE pk_category = $1")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(id)
+	_, err := c.db.Exec("DELETE FROM tb_category WHERE pk_category = $1", id)
 	return err
 }
