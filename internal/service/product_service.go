@@ -15,7 +15,7 @@ type ProductService struct {
 	repo ProductRepository
 }
 
-func (s *ProductService) CreateProduct(name, description string, price float64, imageURL string, categoryID uuid.UUID) (*entities.Product, error) {
+func (s *ProductService) CreateProduct(name, description string, price int64, imageURL string, categoryID uuid.UUID) (*entities.Product, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return nil, errors.New("product name cannot be empty")
@@ -53,7 +53,7 @@ func (s *ProductService) ListProductsByCategory(categoryID uuid.UUID) ([]*entiti
 	return s.repo.FindProductsByCategoryID(categoryID)
 }
 
-func (s *ProductService) UpdateProduct(id uuid.UUID, name, description string, price float64, imageURL string, categoryID uuid.UUID) (*entities.Product, error) {
+func (s *ProductService) UpdateProduct(id uuid.UUID, name, description string, price int64, imageURL string, categoryID uuid.UUID) (*entities.Product, error) {
 	product, err := s.repo.FindProductByID(id)
 	if err != nil {
 		return nil, ErrProductNotFound

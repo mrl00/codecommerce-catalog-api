@@ -10,14 +10,14 @@ type Product struct {
 	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	Price       float64   `json:"price"`
+	Price       int64     `json:"price"`
 	ImageURL    string    `json:"image_url"`
 	CategoryID  uuid.UUID `json:"category"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-func NewProduct(name string, description string, price float64, imageURL string, categoryID uuid.UUID) *Product {
+func NewProduct(name string, description string, price int64, imageURL string, categoryID uuid.UUID) *Product {
 	now := time.Now()
 	return &Product{
 		ID:          uuid.New(),
