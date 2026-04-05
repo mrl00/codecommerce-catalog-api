@@ -1,19 +1,27 @@
 # Backlog
 
-Lista de tarefas e melhorias do projeto goapi.
+Task list and improvements for the goapi project.
 
 ## Done
 
-- [x] Refatorar entidades para usar `time.Time` em campos de data
-- [x] Aplicar naming convention do banco (`tb_`, `pk_`, `tx_`, `nr_`, `ts_`, `fk_`)
-- [x] Corrigir `Save*` para usar o ID da entidade em vez de gerar um novo UUID
-- [x] Adicionar operações Update e Delete no Category e Product
-- [x] Criar handlers CRUD para Category e Product
-- [x] Adicionar rota de produtos por categoria (`GET /api/categories/{id}/products`)
-- [x] Conectar database ao server via `lib/pq`
+- [x] Refactor entities to use `time.Time` for date fields
+- [x] Apply database naming convention (`tb_`, `pk_`, `tx_`, `nr_`, `ts_`, `fk_`)
+- [x] Fix `Save*` to use entity ID instead of generating a new UUID
+- [x] Add Update and Delete operations for Category and Product
+- [x] Create CRUD handlers for Category and Product
+- [x] Add route for products by category (`GET /api/categories/{id}/products`)
+- [x] Connect database to server via `lib/pq`
+- [x] Split `entity.go` into separate files (`category.go`, `product.go`)
 
 ## Todo
 
-- [x] Migrar `entity.go` para arquivos separados (`category.go`, `product.go`)
-- [ ] Criar schema SQL de inicialização do banco
-- [ ] Adicionar validação de input nos handlers
+- [ ] Create SQL database initialization schema
+- [ ] Add input validation in handlers
+- [ ] Add `_test.go` files (CI runs `go test ./...` but there are no tests)
+- [ ] Replace `db.Prepare()` with direct `db.Exec()`/`db.Query()` (statements are single-use)
+- [ ] Change `float64` to decimal type or integer (cents) for price
+- [ ] Implement cascade delete for products when deleting a category
+- [ ] Add pagination to `FindAllProducts()` and `FindAllCategories()`
+- [ ] Optimize `Delete*` in service: use `DELETE WHERE` + check rows affected instead of pre-fetch
+- [ ] Fix CI `secrets.DATABASE_URL` — conflicts with the postgres service defined in the workflow
+- [ ] Standardize module name (`goapi` → `codecommerceapi`)
