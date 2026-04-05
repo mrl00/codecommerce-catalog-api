@@ -2,16 +2,21 @@ package main
 
 import (
 	"database/sql"
+	"embed"
 	"log"
 	"net/http"
 	"os"
 
 	"codecommerceapi/internal/database"
+	"codecommerceapi/internal/migrate"
 	"codecommerceapi/internal/router"
 	"codecommerceapi/internal/service"
 
 	_ "github.com/lib/pq"
 )
+
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
 
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
@@ -27,6 +32,10 @@ func main() {
 
 	if err := db.Ping(); err != nil {
 		log.Fatalf("failed to ping database: %v", err)
+	}
+
+	if err := migrate.Run(db, migrationsFS); err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
 	}
 
 	catDB := database.NewCategoryDB(db)
