@@ -61,6 +61,13 @@ The server listens on `:8080`.
 go build -o server ./cmd/server/
 ```
 
+### Run Tests
+
+```bash
+go test ./...               # unit tests
+./tests/run_tests.sh        # integration tests (requires running server)
+```
+
 ## API Endpoints
 
 ### Health
