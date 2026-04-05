@@ -45,12 +45,12 @@ func (s *ProductService) GetProduct(id uuid.UUID) (*entities.Product, error) {
 	return product, nil
 }
 
-func (s *ProductService) ListProducts() ([]*entities.Product, error) {
-	return s.repo.FindAllProducts()
+func (s *ProductService) ListProducts(params PaginationParams) (*PaginatedResult[*entities.Product], error) {
+	return s.repo.FindAllProducts(params)
 }
 
-func (s *ProductService) ListProductsByCategory(categoryID uuid.UUID) ([]*entities.Product, error) {
-	return s.repo.FindProductsByCategoryID(categoryID)
+func (s *ProductService) ListProductsByCategory(categoryID uuid.UUID, params PaginationParams) (*PaginatedResult[*entities.Product], error) {
+	return s.repo.FindProductsByCategoryID(categoryID, params)
 }
 
 func (s *ProductService) UpdateProduct(id uuid.UUID, name, description string, price int64, imageURL string, categoryID uuid.UUID) (*entities.Product, error) {

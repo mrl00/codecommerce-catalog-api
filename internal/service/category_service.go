@@ -37,8 +37,8 @@ func (s *CategoryService) GetCategory(id uuid.UUID) (*entities.Category, error) 
 	return category, nil
 }
 
-func (s *CategoryService) ListCategories() ([]*entities.Category, error) {
-	return s.repo.FindAllCategories()
+func (s *CategoryService) ListCategories(params PaginationParams) (*PaginatedResult[*entities.Category], error) {
+	return s.repo.FindAllCategories(params)
 }
 
 func (s *CategoryService) UpdateCategory(id uuid.UUID, name string) (*entities.Category, error) {

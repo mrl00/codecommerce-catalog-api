@@ -85,15 +85,38 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
+func parsePaginationParams(r *http.Request) service.PaginationParams {
+	q := r.URL.Query()
+	page := 1
+	perPage := 10
+
+	if v := q.Get("page"); v != "" {
+		fmt.Sscanf(v, "%d", &page)
+	}
+	if v := q.Get("per_page"); v != "" {
+		fmt.Sscanf(v, "%d", &perPage)
+	}
+
+	if page < 1 {
+		page = 1
+	}
+	if perPage < 1 || perPage > 100 {
+		perPage = 10
+	}
+
+	return service.PaginationParams{Page: page, PerPage: perPage}
+}
+
 func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := h.svc.ListProducts()
+	params := parsePaginationParams(r)
+	result, err := h.svc.ListProducts(params)
 	if err != nil {
 		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(products)
+	json.NewEncoder(w).Encode(result)
 }
 
 func (h *ProductHandler) ListProductsByCategory(w http.ResponseWriter, r *http.Request) {
@@ -103,14 +126,15 @@ func (h *ProductHandler) ListProductsByCategory(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	products, err := h.svc.ListProductsByCategory(categoryID)
+	params := parsePaginationParams(r)
+	result, err := h.svc.ListProductsByCategory(categoryID, params)
 	if err != nil {
 		errorResponse(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(products)
+	json.NewEncoder(w).Encode(result)
 }
 
 func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
