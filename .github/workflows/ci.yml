@@ -35,9 +35,25 @@ jobs:
         run: go mod download
 
       - name: Build
-        run: go build -v ./...
+        run: go build -v -o server ./cmd/server/
 
-      - name: Run tests
+      - name: Run unit tests
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/codecommerce?sslmode=disable"
         run: go test -v ./...
+
+      - name: Start server
+        env:
+          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/codecommerce?sslmode=disable"
+        run: ./server &
+
+      - name: Wait for server
+        run: sleep 3
+
+      - name: Install hurl
+        run: |
+          curl -sL https://github.com/Orange-OpenSource/hurl/releases/download/7.1.0/hurl_7.1.0_amd64.deb -o hurl.deb
+          sudo dpkg -i hurl.deb
+
+      - name: Run hurl integration tests
+        run: hurl --test tests/*.hurl
