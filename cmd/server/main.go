@@ -8,6 +8,7 @@ import (
 
 	"goapi/internal/database"
 	"goapi/internal/router"
+	"goapi/internal/service"
 
 	_ "github.com/lib/pq"
 )
@@ -31,7 +32,10 @@ func main() {
 	catDB := database.NewCategoryDB(db)
 	prodDB := database.NewProductDB(db)
 
-	r := router.New(catDB, prodDB)
+	catSvc := service.NewCategoryService(catDB)
+	prodSvc := service.NewProductService(prodDB)
+
+	r := router.New(catSvc, prodSvc)
 
 	log.Println("starting server on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

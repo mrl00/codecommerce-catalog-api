@@ -22,3 +22,7 @@ func NewCategory(name string) *Category {
 		UpdatedAt: now,
 	}
 }
+
+func (c *Category) ResetUpdatedAt() {
+	c.UpdatedAt = time.Now()
+}
