@@ -21,11 +21,11 @@ func NewProductHandler(svc *service.ProductService) *ProductHandler {
 
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Name        string  `json:"name"`
-		Description string  `json:"description"`
-		Price       float64 `json:"price"`
-		ImageURL    string  `json:"image_url"`
-		CategoryID  string  `json:"category"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Price       int64  `json:"price"`
+		ImageURL    string `json:"image_url"`
+		CategoryID  string `json:"category"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		errorResponse(w, "invalid request body", http.StatusBadRequest)
@@ -121,11 +121,11 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
-		Name        string  `json:"name"`
-		Description string  `json:"description"`
-		Price       float64 `json:"price"`
-		ImageURL    string  `json:"image_url"`
-		CategoryID  string  `json:"category"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Price       int64  `json:"price"`
+		ImageURL    string `json:"image_url"`
+		CategoryID  string `json:"category"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		errorResponse(w, "invalid request body", http.StatusBadRequest)

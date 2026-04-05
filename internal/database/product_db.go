@@ -90,12 +90,6 @@ func (p *ProductDB) UpdateProduct(product *entities.Product) error {
 }
 
 func (p *ProductDB) DeleteProduct(id uuid.UUID) error {
-	stmt, err := p.db.Prepare("DELETE FROM tb_product WHERE pk_product = $1")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(id)
+	_, err := p.db.Exec("DELETE FROM tb_product WHERE pk_product = $1", id)
 	return err
 }
