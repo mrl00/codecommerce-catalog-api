@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"goapi/internal/entities"
+	"codecommerceapi/internal/entities"
 
 	"github.com/google/uuid"
 )

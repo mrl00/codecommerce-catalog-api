@@ -1,4 +1,4 @@
-# goapi
+# codecommerceapi
 
 A REST API service built with Go and gorilla/mux, featuring a product catalog with categories and PostgreSQL persistence.
 
@@ -13,7 +13,9 @@ internal/
 │   ├── category.go         # Category domain model
 │   └── product.go          # Product domain model
 ├── handler/
-│   └── handler.go          # HTTP request handlers
+│   ├── category_handler.go # Category HTTP handlers
+│   ├── product_handler.go  # Product HTTP handlers
+│   └── health.go           # Health check handler
 ├── router/
 │   └── router.go           # Route definitions
 ├── database/
@@ -37,10 +39,10 @@ internal/
 The database connection is configured via `DATABASE_URL` environment variable:
 
 ```bash
-export DATABASE_URL="postgres://user:password@localhost:5432/goapi?sslmode=disable"
+export DATABASE_URL="postgres://user:password@localhost:5432/codecommerce?sslmode=disable"
 ```
 
-Defaults to `postgres://localhost:5432/goapi?sslmode=disable` if not set.
+Defaults to `postgres://localhost:5432/codecommerce?sslmode=disable` if not set.
 
 ### Run
 

@@ -1,6 +1,6 @@
 # Backlog
 
-Task list and improvements for the goapi project.
+Task list and improvements for the codecommerceapi project.
 
 ## Done
 
@@ -24,4 +24,4 @@ Task list and improvements for the goapi project.
 - [ ] Add pagination to `FindAllProducts()` and `FindAllCategories()`
 - [ ] Optimize `Delete*` in service: use `DELETE WHERE` + check rows affected instead of pre-fetch
 - [ ] Fix CI `secrets.DATABASE_URL` — conflicts with the postgres service defined in the workflow
-- [ ] Standardize module name (`goapi` → `codecommerceapi`)
+- [x] Standardize module name (`goapi` → `codecommerceapi`)

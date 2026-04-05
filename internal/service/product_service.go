@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"goapi/internal/entities"
+	"codecommerceapi/internal/entities"
 
 	"github.com/google/uuid"
 )

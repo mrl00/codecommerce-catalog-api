@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	"goapi/internal/database"
-	"goapi/internal/router"
-	"goapi/internal/service"
+	"codecommerceapi/internal/database"
+	"codecommerceapi/internal/router"
+	"codecommerceapi/internal/service"
 
 	_ "github.com/lib/pq"
 )
@@ -16,7 +16,7 @@ import (
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://localhost:5432/goapi?sslmode=disable"
+		dbURL = "postgres://localhost:5432/codecommerce?sslmode=disable"
 	}
 
 	db, err := sql.Open("postgres", dbURL)

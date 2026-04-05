@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"goapi/internal/service"
+	"codecommerceapi/internal/service"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"goapi/internal/entities"
+	"codecommerceapi/internal/entities"
 
 	"github.com/google/uuid"
 )
