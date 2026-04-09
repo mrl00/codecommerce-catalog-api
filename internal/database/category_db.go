@@ -57,7 +57,7 @@ func (c *CategoryDB) FindAllCategories(params service.PaginationParams) (*servic
 	}
 	defer rows.Close()
 
-	var categories []*entities.Category
+	categories := make([]*entities.Category, 0)
 	for rows.Next() {
 		category := &entities.Category{}
 		err = rows.Scan(&category.ID, &category.Name, &category.CreatedAt, &category.UpdatedAt)
