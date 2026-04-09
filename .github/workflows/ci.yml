@@ -40,12 +40,12 @@ jobs:
 
       - name: Run unit tests
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/codecommerce?sslmode=disable
         run: go test -v ./...
 
       - name: Start server
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/codecommerce?sslmode=disable
         run: ./server &
 
       - name: Wait for server
