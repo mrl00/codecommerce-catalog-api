@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+
 type ProductHandler struct {
 	svc *service.ProductService
 }
@@ -85,27 +86,7 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
-func parsePaginationParams(r *http.Request) service.PaginationParams {
-	q := r.URL.Query()
-	page := 1
-	perPage := 10
 
-	if v := q.Get("page"); v != "" {
-		fmt.Sscanf(v, "%d", &page)
-	}
-	if v := q.Get("per_page"); v != "" {
-		fmt.Sscanf(v, "%d", &perPage)
-	}
-
-	if page < 1 {
-		page = 1
-	}
-	if perPage < 1 || perPage > 100 {
-		perPage = 10
-	}
-
-	return service.PaginationParams{Page: page, PerPage: perPage}
-}
 
 func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 	params := parsePaginationParams(r)
