@@ -32,7 +32,7 @@ Task list and improvements for the codecommerceapi project.
 ### High
 
 - [x] Hardcode `DATABASE_URL` in CI workflow — currently uses `secrets.DATABASE_URL` which conflicts with the inline Postgres service
-- [ ] Add `schema_migrations` tracking table to migration runner — currently re-executes all migrations on every startup, will break with `ALTER TABLE` migrations
+- [x] Add `schema_migrations` tracking table to migration runner — currently re-executes all migrations on every startup, will break with `ALTER TABLE` migrations
 
 ### Medium
 
