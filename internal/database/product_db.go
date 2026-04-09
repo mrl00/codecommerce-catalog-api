@@ -57,7 +57,7 @@ func (p *ProductDB) FindAllProducts(params service.PaginationParams) (*service.P
 	}
 	defer rows.Close()
 
-	var products []*entities.Product
+	products := make([]*entities.Product, 0)
 	for rows.Next() {
 		product := &entities.Product{}
 		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price, &product.ImageURL, &product.CategoryID, &product.CreatedAt, &product.UpdatedAt)
@@ -99,7 +99,7 @@ func (p *ProductDB) FindProductsByCategoryID(categoryID uuid.UUID, params servic
 	}
 	defer rows.Close()
 
-	var products []*entities.Product
+	products := make([]*entities.Product, 0)
 	for rows.Next() {
 		product := &entities.Product{}
 		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price, &product.ImageURL, &product.CategoryID, &product.CreatedAt, &product.UpdatedAt)
