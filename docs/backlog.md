@@ -46,7 +46,7 @@ Task list and improvements for the codecommerceapi project.
 
 - [ ] Use `errors.Is()` for sentinel error comparisons in handlers — current `==` checks are fragile if errors get wrapped
 - [ ] Order list queries by `ts_*_created_at DESC` instead of primary key (UUID) — current order is effectively random
-- [ ] Return `[]` instead of `null` for empty paginated `Items` — initialize slices with `make([]T, 0)` before marshalling
+- [x] Return `[]` instead of `null` for empty paginated `Items` — initialize slices with `make([]T, 0)` before marshalling
 - [ ] Fix Docker image name typo in `docker-publish.yml` — `codecomerce` → `codecommerce` (missing 'm')
 - [ ] Add index on `fk_category` in `tb_product` — `FindProductsByCategoryID` filters on it but Postgres doesn't auto-index FK columns
 - [ ] Make health endpoint check DB connectivity — currently returns `ok` without pinging the database
