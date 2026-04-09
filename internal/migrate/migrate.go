@@ -5,7 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 	"sort"
 )
@@ -36,7 +36,7 @@ func Run(db *sql.DB) error {
 	for _, path := range paths {
 		fn := filepath.Base(path)
 		if applied[fn] {
-			log.Printf("skipping migration (already applied): %s", fn)
+			slog.Info("skipping migration (already applied)", "file", fn)
 			continue
 		}
 
@@ -45,14 +45,14 @@ func Run(db *sql.DB) error {
 			return fmt.Errorf("failed to read %s: %w", path, err)
 		}
 
-		log.Printf("running migration: %s", fn)
+		slog.Info("running migration", "file", fn)
 		if err := execMigration(db, fn, string(content)); err != nil {
 			return fmt.Errorf("failed to execute %s: %w", fn, err)
 		}
 		ran++
 	}
 
-	log.Printf("migrations completed: %d applied, %d skipped", ran, len(paths)-ran)
+	slog.Info("migrations completed", "applied", ran, "skipped", len(paths)-ran)
 	return nil
 }
 
