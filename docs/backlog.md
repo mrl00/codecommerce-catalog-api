@@ -39,7 +39,7 @@ Task list and improvements for the codecommerceapi project.
 - [x] Consolidate duplicate pagination parser — `parseCategoryPaginationParams()` and `parsePaginationParams()` are identical, extract into a single shared function
 - [ ] Add structured logging with `log/slog` — replace `log.Println`/`log.Fatalf` with leveled, structured output
 - [ ] Add HTTP middleware — request logging, CORS, panic recovery, request ID injection
-- [ ] Implement graceful shutdown — handle OS signals (`SIGINT`/`SIGTERM`) and drain connections before exit
+- [x] Implement graceful shutdown — handle OS signals (`SIGINT`/`SIGTERM`) and drain connections before exit
 - [ ] Check `RowsAffected()` in `UpdateCategory`/`UpdateProduct` — silent no-op if row is deleted between `FindByID` and `Update`
 
 ### Low
