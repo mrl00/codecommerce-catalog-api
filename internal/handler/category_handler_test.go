@@ -126,13 +126,13 @@ func TestErrorResponse(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// parseCategoryPaginationParams
+// parsePaginationParams
 // ---------------------------------------------------------------------------
 
-func TestParseCategoryPaginationParams(t *testing.T) {
+func TestParsePaginationParams(t *testing.T) {
 	t.Run("defaults when no query params", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/categories", nil)
-		p := parseCategoryPaginationParams(req)
+		p := parsePaginationParams(req)
 		if p.Page != 1 {
 			t.Errorf("expected page 1, got %d", p.Page)
 		}
@@ -143,7 +143,7 @@ func TestParseCategoryPaginationParams(t *testing.T) {
 
 	t.Run("custom values", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/categories?page=3&per_page=25", nil)
-		p := parseCategoryPaginationParams(req)
+		p := parsePaginationParams(req)
 		if p.Page != 3 {
 			t.Errorf("expected page 3, got %d", p.Page)
 		}
@@ -154,7 +154,7 @@ func TestParseCategoryPaginationParams(t *testing.T) {
 
 	t.Run("page below 1 defaults to 1", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/categories?page=0", nil)
-		p := parseCategoryPaginationParams(req)
+		p := parsePaginationParams(req)
 		if p.Page != 1 {
 			t.Errorf("expected page 1, got %d", p.Page)
 		}
@@ -162,7 +162,7 @@ func TestParseCategoryPaginationParams(t *testing.T) {
 
 	t.Run("per_page above 100 defaults to 10", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/categories?per_page=200", nil)
-		p := parseCategoryPaginationParams(req)
+		p := parsePaginationParams(req)
 		if p.PerPage != 10 {
 			t.Errorf("expected per_page 10, got %d", p.PerPage)
 		}
@@ -170,7 +170,7 @@ func TestParseCategoryPaginationParams(t *testing.T) {
 
 	t.Run("per_page below 1 defaults to 10", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/categories?per_page=-5", nil)
-		p := parseCategoryPaginationParams(req)
+		p := parsePaginationParams(req)
 		if p.PerPage != 10 {
 			t.Errorf("expected per_page 10, got %d", p.PerPage)
 		}
