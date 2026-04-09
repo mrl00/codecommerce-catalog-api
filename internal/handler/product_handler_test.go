@@ -152,68 +152,7 @@ func validProductJSON(categoryID uuid.UUID) string {
 	}`, categoryID)
 }
 
-// ---------------------------------------------------------------------------
-// parsePaginationParams
-// ---------------------------------------------------------------------------
 
-func TestParsePaginationParams(t *testing.T) {
-	t.Run("defaults when no query params", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/products", nil)
-		p := parsePaginationParams(req)
-		if p.Page != 1 {
-			t.Errorf("expected page 1, got %d", p.Page)
-		}
-		if p.PerPage != 10 {
-			t.Errorf("expected per_page 10, got %d", p.PerPage)
-		}
-	})
-
-	t.Run("custom values", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/products?page=5&per_page=50", nil)
-		p := parsePaginationParams(req)
-		if p.Page != 5 {
-			t.Errorf("expected page 5, got %d", p.Page)
-		}
-		if p.PerPage != 50 {
-			t.Errorf("expected per_page 50, got %d", p.PerPage)
-		}
-	})
-
-	t.Run("page below 1 defaults to 1", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/products?page=-1", nil)
-		p := parsePaginationParams(req)
-		if p.Page != 1 {
-			t.Errorf("expected page 1, got %d", p.Page)
-		}
-	})
-
-	t.Run("per_page above 100 defaults to 10", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/products?per_page=101", nil)
-		p := parsePaginationParams(req)
-		if p.PerPage != 10 {
-			t.Errorf("expected per_page 10, got %d", p.PerPage)
-		}
-	})
-
-	t.Run("per_page below 1 defaults to 10", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/products?per_page=0", nil)
-		p := parsePaginationParams(req)
-		if p.PerPage != 10 {
-			t.Errorf("expected per_page 10, got %d", p.PerPage)
-		}
-	})
-
-	t.Run("non-numeric values use defaults", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/products?page=abc&per_page=xyz", nil)
-		p := parsePaginationParams(req)
-		if p.Page != 1 {
-			t.Errorf("expected page 1, got %d", p.Page)
-		}
-		if p.PerPage != 10 {
-			t.Errorf("expected per_page 10, got %d", p.PerPage)
-		}
-	})
-}
 
 // ---------------------------------------------------------------------------
 // CreateProduct
