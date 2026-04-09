@@ -1,6 +1,7 @@
 # codecommerceapi
 
 [![CI](https://github.com/mrl00/codecommerceapi/actions/workflows/ci.yml/badge.svg)](https://github.com/mrl00/codecommerceapi/actions/workflows/ci.yml)
+[![Docker Publish](https://github.com/mrl00/codecommerce-catalog-api/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/mrl00/codecommerce-catalog-api/actions/workflows/docker-publish.yml)
 [![Go Reference](https://pkg.go.dev/badge/codecommerceapi.svg)](https://pkg.go.dev/codecommerceapi)
 
 A REST API service built with Go and gorilla/mux, featuring a product catalog with categories and PostgreSQL persistence.
